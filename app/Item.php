@@ -20,6 +20,14 @@ class Item extends Model
     public $timestamps = false;
 
     /**
+     * Attributes to be appended.
+     * @var array
+     */
+    protected $appends = [
+        'status'
+    ];
+
+    /**
      * Get the Order that owns this Item.
      */
     public function order()
@@ -33,5 +41,25 @@ class Item extends Model
     public function product()
     {
         return $this->hasOne('App\Product');
+    }
+
+    /**
+     * Get the status attribute, as determined by whether an order_id exists.
+     * @return string
+     */
+    public function getStatusAttribute()
+    {
+        return $this->order ? self::STATUS_ASSIGNED : self::STATUS_AVAILABLE;
+    }
+
+    /**
+     * Scope a query to only include items available for ordering (Builder::availableForNewOrder()).
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAvailableForNewOrder($query)
+    {
+        return $query->where('order_id', null);
     }
 }

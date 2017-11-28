@@ -21,7 +21,7 @@ class Order extends Model
      * @var array
      */
     protected $attributes = [
-        'status' => self::STATUS_IN_PROGRESS
+        'status' => self::STATUS_IN_PROGRESS,
     ];
 
     /**
