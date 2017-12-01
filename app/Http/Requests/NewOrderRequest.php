@@ -24,7 +24,14 @@ class NewOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'data' => 'required|json'
+            'order'                  => 'required',
+            'order.customer'         => 'required|min:2',
+            'order.address'          => 'required|string|min:2',
+            'order.total'            => 'required|integer|min:0',
+            'order.items'            => 'required|array|min:1',
+            'order.items.*.sku'      => 'required|min:2|max:20',
+            'order.items.*.quantity' => 'required|integer|min:1',
+            'order.items.*.colour'   => 'string|max:20'
         ];
     }
 }

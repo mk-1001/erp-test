@@ -30,7 +30,6 @@ class OrderItemProductSeeder extends Seeder
 
         factory(App\Order::class, 5)->create()->each(function (App\Order $order) {
             // Get items that are not assigned, or no order_id
-            // Add them to the order, $item->saveOrder(Order) also sets status
             $items = App\Item::availableForNewOrder()->inRandomOrder()->limit(rand(1, 3))->get();
             $order->items()->saveMany($items);
         });

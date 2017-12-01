@@ -12,12 +12,22 @@ class Order extends Model
 
     /**
      * No timestamps for this model.
+     *
      * @var bool $timestamps
      */
     public $timestamps = false;
 
     /**
+     * @var array
+     */
+    protected $fillable = [
+        'customer_name',
+        'address'
+    ];
+
+    /**
      * Default attributes for orders.
+     *
      * @var array
      */
     protected $attributes = [

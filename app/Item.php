@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    const STATUS_AVAILABLE = 'available';
     const STATUS_ASSIGNED = 'assigned';
+    const STATUS_AVAILABLE = 'available';
 
     const PHYSICAL_STATUS_TO_ORDER = 'to order';
     const PHYSICAL_STATUS_IN_WAREHOUSE = 'in warehouse';
@@ -15,9 +15,25 @@ class Item extends Model
 
     /**
      * No timestamps for this model.
+     *
      * @var bool $timestamps
      */
     public $timestamps = false;
+
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'order_id',
+        'product_id'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $attributes = [
+        'physical_status' => self::PHYSICAL_STATUS_TO_ORDER
+    ];
 
     /**
      * Attributes to be appended.
@@ -40,11 +56,12 @@ class Item extends Model
      */
     public function product()
     {
-        return $this->hasOne('App\Product');
+        return $this->belongsTo('App\Product');
     }
 
     /**
      * Get the status attribute, as determined by whether an order_id exists.
+     *
      * @return string
      */
     public function getStatusAttribute()
