@@ -29,9 +29,9 @@ class Product extends Model
     ];
 
     /**
-     * Get the Items containing this Product.
+     * Get the Item this Product has.
      */
-    public function items()
+    public function item()
     {
         return $this->hasOne('App\Item');
     }

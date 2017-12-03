@@ -13,4 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('/orders', 'OrderSubmissionController@newOrder');
+Route::post('/orders', 'OrderSubmissionController@store');

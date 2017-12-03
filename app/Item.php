@@ -79,4 +79,17 @@ class Item extends Model
     {
         return $query->where('order_id', null);
     }
+
+    /**
+     * Remove this item from an order, after checking that order ID is related.
+     *
+     * @param int $orderID
+     */
+    public function removeFromOrder($orderID)
+    {
+        if ($this->order && $this->order->id == $orderID) {
+            $this->order()->dissociate();
+            $this->save();
+        }
+    }
 }

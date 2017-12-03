@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('orders', 'OrdersController', ['only' => ['index', 'edit']]);
+Route::delete('orders/{order}/items/{item}', [
+    'uses' => 'OrdersController@removeItem',
+    'as'   => 'orders.items.remove'
+]);
