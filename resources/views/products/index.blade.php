@@ -2,6 +2,9 @@
 
 @section('content')
     <h2>Products</h2>
+
+    @include('partials/flash')
+
     <a href="{{ route('products.create') }}" class="btn btn-success">
         <span class="glyphicon glyphicon-plus"></span> Add new Product
     </a>
@@ -13,6 +16,7 @@
                 <th>ID</th>
                 <th>SKU</th>
                 <th>Colour</th>
+                <th>Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +25,9 @@
                     <td>{{ $product->id }}</td>
                     <td>{{ $product->sku }}</td>
                     <td>{{ $product->colour }}</td>
+                    <td>
+                        <a href="{{ route('products.edit', [$product->id]) }}" class="btn btn-info">Edit</a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

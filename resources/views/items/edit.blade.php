@@ -18,7 +18,9 @@
                     <td>
                         {!! Form::select(
                                 'physical_status',
-                                array_combine(\App\Item::PHYSICAL_STATUSES, \App\Item::PHYSICAL_STATUSES)
+                                $item->order ? array_combine(\App\Item::PHYSICAL_STATUSES, \App\Item::PHYSICAL_STATUSES)
+                                    : array_combine(\App\Item::PHYSICAL_STATUSES_WITHOUT_ORDER,
+                                        \App\Item::PHYSICAL_STATUSES_WITHOUT_ORDER)
                             )
                         !!}
                     </td>

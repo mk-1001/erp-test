@@ -3,6 +3,8 @@
 @section('content')
     <h2>Orders</h2>
 
+    @include('partials/flash')
+
     <!-- Orders table -->
     <table class="table table-responsive">
         <thead>

@@ -16,8 +16,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('orders', 'OrdersController', ['only' => ['index', 'edit']]);
-Route::resource('items', 'ItemsController');
-Route::resource('products', 'ProductsController');
+Route::resource('items', 'ItemsController', ['except' => ['show', 'destroy']]);
+Route::resource('products', 'ProductsController', ['except' => ['show', 'destroy']]);
 Route::delete('orders/{order}/items/{item}', [
     'uses' => 'OrdersController@removeItem',
     'as'   => 'orders.items.remove'

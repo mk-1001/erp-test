@@ -21,7 +21,7 @@
             <tr>
                 <td>Product:</td>
                 <td>
-                    Product Field holder
+                    {!! Form::select('product_id', $availableProductDetailsByID) !!}
                 </td>
             </tr>
         </tbody>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Product;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ProductsController extends Controller
 {
@@ -31,23 +33,13 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CreateProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateProductRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        Product::create($request->all());
+        return Redirect::route('products.index')->with('message', 'Product added successfully.');
     }
 
     /**
@@ -58,29 +50,19 @@ class ProductsController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products/create', compact($product));
+        return view('products/edit', compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  UpdateProductRequest $request
+     * @param  Product $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $product->update($request->all());
+        return Redirect::route('products.index')->with('message', 'Product updated successfully.');
     }
 }

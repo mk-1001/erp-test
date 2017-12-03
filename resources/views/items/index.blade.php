@@ -2,6 +2,9 @@
 
 @section('content')
     <h2>Items</h2>
+
+    @include('partials/flash')
+
     <a href="{{ route('items.create') }}" class="btn btn-success">
         <span class="glyphicon glyphicon-plus"></span> Add new Item
     </a>

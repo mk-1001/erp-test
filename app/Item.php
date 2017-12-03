@@ -19,6 +19,11 @@ class Item extends Model
         self::PHYSICAL_STATUS_DELIVERED
     ];
 
+    const PHYSICAL_STATUSES_WITHOUT_ORDER = [
+        self::PHYSICAL_STATUS_TO_ORDER,
+        self::PHYSICAL_STATUS_IN_WAREHOUSE
+    ];
+
     /**
      * No timestamps for this model.
      *
@@ -77,6 +82,16 @@ class Item extends Model
     }
 
     /**
+     * Get the physical_status values that are allowed for this item.
+     *
+     * @return array
+     */
+    public function getAllowedPhysicalStatuses()
+    {
+        return $this->order ? self::PHYSICAL_STATUSES : self::PHYSICAL_STATUSES_WITHOUT_ORDER;
+    }
+
+    /**
      * Scope a query to only include items available for ordering (Builder::availableForNewOrder()).
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -89,14 +104,20 @@ class Item extends Model
 
     /**
      * Remove this item from an order, after checking that order ID is related.
-     *
-     * @param int $orderID
      */
-    public function removeFromOrder($orderID)
+    public function removeOrder()
     {
-        if ($this->order && $this->order->id == $orderID) {
-            $this->order()->dissociate();
-            $this->save();
-        }
+        $this->order()->dissociate();
+        $this->save();
+    }
+
+    /**
+     * Has this Item been delivered?
+     *
+     * @return bool
+     */
+    public function isDeliveredToCustomer()
+    {
+        return $this->physical_status == self::PHYSICAL_STATUS_DELIVERED;
     }
 }

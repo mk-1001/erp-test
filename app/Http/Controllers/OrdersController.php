@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UpdateOrderStatus;
 use App\Order;
 use App\Item;
 use Illuminate\Support\Facades\Redirect;
@@ -27,6 +28,7 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
+        $this->dispatch(new UpdateOrderStatus($order));
         return view('orders/edit', compact('order'));
     }
 
@@ -39,7 +41,7 @@ class OrdersController extends Controller
      */
     public function removeItem(Order $order, Item $item)
     {
-        $item->removeFromOrder($order->id);
+        $order->removeItem($item->id);
         return Redirect::route('orders.edit', [$order->id])->with('message', 'Item removed from order.');
     }
 }

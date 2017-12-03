@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Item;
-use Illuminate\Http\Request;
+use App\Product;
 use Illuminate\Support\Facades\Redirect;
 
 class ItemsController extends Controller
@@ -27,29 +28,23 @@ class ItemsController extends Controller
      */
     public function create()
     {
-        return view('items/create');
+        $availableProductsByID = Product::orderBy('sku')->get()->keyBy('id');
+        $availableProductDetailsByID = $availableProductsByID->map(function (Product $product) {
+            return "SKU: {$product->sku}, colour: {$product->colour}";
+        });
+        return view('items/create', compact('availableProductDetailsByID'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CreateItemRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateItemRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        Item::create($request->all());
+        return Redirect::route('items.index')->with('message', 'Item added successfully.');
     }
 
     /**
@@ -74,16 +69,5 @@ class ItemsController extends Controller
     {
         $item->update($request->input());
         return Redirect::route('items.edit', [$item->id])->with('message', 'Item updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

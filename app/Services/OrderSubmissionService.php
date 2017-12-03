@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Item;
+use App\Jobs\SendProductCreatedAdminEmail;
 use App\Order;
 use App\Product;
 use Illuminate\Database\Eloquent\Collection;
@@ -24,6 +25,7 @@ class OrderSubmissionService
         ]);
 
         // Step 2: Check if Products exist, get them (or else create them)
+        // Note: it is already assumed that each "item" in the order will have a unique SKU
         $products = collect($orderInput['items'])->map(function (array $productInput) {
             $product = Product::where([
                 'sku' => $productInput['sku']
@@ -35,6 +37,7 @@ class OrderSubmissionService
         });
 
         // Step 3: Check if Items exist
+        $numNewItemsMade = 0;
         $allItems = new Collection();
         foreach ($orderInput['items'] as $item) {
             $requiredQuantity = $item['quantity'];
@@ -43,9 +46,10 @@ class OrderSubmissionService
             // Get existing Item(s) for adding to the Order
             $orderItems = Item::where('product_id', $suitableProduct->id)
                 ->availableForNewOrder()
-                ->limit($requiredQuantity)
                 ->with('product')
+                ->limit($requiredQuantity)
                 ->get();
+
             $orderItems->map(function (Item $item) use ($order) {
                 $item->order()->associate($order);
                 $item->save();
@@ -56,13 +60,14 @@ class OrderSubmissionService
             // return/break if none
 
             // Insert new Items
-            foreach (range(1, $numItemsStillRequired) as $index) {
+            for ($i = 0; $i < $numItemsStillRequired; $i++) {
                 $newItem = Item::make();
                 $newItem->order()->associate($order);
                 $newItem->product()->associate($suitableProduct);
                 $newItem->save();
                 $orderItems->add($newItem);
             }
+            $numNewItemsMade += $numItemsStillRequired;
 
             // Insert into the $allItems Collection
             $orderItems->map(function (Item $item) use ($allItems) {
@@ -70,6 +75,10 @@ class OrderSubmissionService
             });
         }
 
+        // Step 4: Inform the administrator if any new Items were created (as they did not exist)
+        if ($numNewItemsMade) {
+            SendProductCreatedAdminEmail::dispatch(new SendProductCreatedAdminEmail());
+        }
         return $orderItems;
     }
 

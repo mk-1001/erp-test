@@ -35,4 +35,17 @@ class Product extends Model
     {
         return $this->hasOne('App\Item');
     }
+
+    /**
+     * Use the default colour if none is provided.
+     * @param string $colour
+     */
+    public function setColourAttribute($colour)
+    {
+        if ($colour) {
+            $this->attributes['colour'] = $colour;
+            return;
+        }
+        $this->attributes['colour'] = '-';
+    }
 }

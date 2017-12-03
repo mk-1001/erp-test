@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Item;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateItemRequest extends FormRequest
+class CreateItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +24,9 @@ class UpdateItemRequest extends FormRequest
      */
     public function rules()
     {
-        $relatedItem = $this->route('item');
         return [
-            'physical_status' => 'required|in:' . implode(',', $relatedItem->getAllowedPhysicalStatuses())
+            'physical_status' => 'required|in:' . implode(',', Item::PHYSICAL_STATUSES_WITHOUT_ORDER),
+            'product_id'      => 'required|exists:products,id'
         ];
     }
 }

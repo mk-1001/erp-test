@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateItemRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,16 @@ class UpdateItemRequest extends FormRequest
      */
     public function rules()
     {
-        $relatedItem = $this->route('item');
+        // Add a unique SKU requirement, only if the SKU is being changed
+        $relatedProduct = $this->route('product');
+        $uniqueSKU = '';
+        if ($relatedProduct->sku != $this->get('sku')) {
+            $uniqueSKU = '|unique:products,sku';
+        }
+
         return [
-            'physical_status' => 'required|in:' . implode(',', $relatedItem->getAllowedPhysicalStatuses())
+            'sku'    => 'required|string|min:1|max:20' . $uniqueSKU,
+            'colour' => 'max:20',
         ];
     }
 }

@@ -39,6 +39,7 @@
                     <th>Physical Status</th>
                     <th>Product SKU</th>
                     <th>Product Colour</th>
+                    <th>View/Edit Item</th>
                     <th>Remove From Order</th>
                 </tr>
             </thead>
@@ -50,6 +51,11 @@
                         <td>{{ $item->physical_status }}</td>
                         <td>{{ $item->product->sku }}</td>
                         <td>{{ $item->product->colour }}</td>
+                        <td>
+                            <a href="{{ route('items.edit', [$item->id]) }}" class="btn btn-info">
+                                <span class="glyphicon glyphicon-eye-open"></span> View/Edit
+                            </a>
+                        </td>
                         <td>
                             {!! Form::open(['route' => [
                                 'orders.items.remove',

@@ -31,7 +31,7 @@ class NewOrderRequest extends FormRequest
             'order.items'            => 'required|array|min:1',
             'order.items.*.sku'      => 'required|min:2|max:20',
             'order.items.*.quantity' => 'required|integer|min:1',
-            'order.items.*.colour'   => 'string|max:20'
+            'order.items.*.colour'   => 'max:20'
         ];
     }
 }
