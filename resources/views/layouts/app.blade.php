@@ -38,25 +38,28 @@
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#erp-logic-system-navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
+
+                <!-- 3 Icon bars -->
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">ERP Logic System</a>
+            <a class="navbar-brand" href="{{ route('home') }}">ERP Logic System</a>
         </div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+        <!-- Other links, active state toggled using Request:: -->
+        <div class="collapse navbar-collapse" id="erp-logic-system-navbar-collapse">
             <ul class="nav navbar-nav">
-                <li>
-                    <a href="#">Orders</a>
+                <li class="{{ Request::is('orders*') ? 'active' : '' }}">
+                    <a href="{{ route('orders.index') }}">Orders</a>
                 </li>
-                <li>
-                    <a href="#">Items</a>
+                <li class="{{ Request::is('items*') ? 'active' : '' }}">
+                    <a href="{{ route('items.index') }}">Items</a>
                 </li>
-                <li>
-                    <a href="#">Products</a>
+                <li class="{{ Request::is('products*') ? 'active' : '' }}">
+                    <a href="{{ route('products.index') }}">Products</a>
                 </li>
             </ul>
         </div>

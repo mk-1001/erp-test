@@ -13,6 +13,12 @@ class Item extends Model
     const PHYSICAL_STATUS_IN_WAREHOUSE = 'in warehouse';
     const PHYSICAL_STATUS_DELIVERED = 'delivered';
 
+    const PHYSICAL_STATUSES = [
+        self::PHYSICAL_STATUS_TO_ORDER,
+        self::PHYSICAL_STATUS_IN_WAREHOUSE,
+        self::PHYSICAL_STATUS_DELIVERED
+    ];
+
     /**
      * No timestamps for this model.
      *
@@ -25,7 +31,8 @@ class Item extends Model
      */
     protected $fillable = [
         'order_id',
-        'product_id'
+        'product_id',
+        'physical_status'
     ];
 
     /**

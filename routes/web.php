@@ -12,10 +12,12 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->name('home');
 
 Route::resource('orders', 'OrdersController', ['only' => ['index', 'edit']]);
+Route::resource('items', 'ItemsController');
+Route::resource('products', 'ProductsController');
 Route::delete('orders/{order}/items/{item}', [
     'uses' => 'OrdersController@removeItem',
     'as'   => 'orders.items.remove'
