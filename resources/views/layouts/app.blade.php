@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>ERP Logic System</title>
+    <title>{{ config('app.name') }}</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -46,7 +46,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ route('home') }}">ERP Logic System</a>
+            <a class="navbar-brand" href="{{ route('home') }}">{{ config('app.name') }}</a>
         </div>
 
         <!-- Other links, active state toggled using Request:: -->
