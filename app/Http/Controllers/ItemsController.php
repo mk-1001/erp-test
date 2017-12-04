@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Item;
+use App\Jobs\UpdateOrderStatus;
 use App\Product;
 use Illuminate\Support\Facades\Redirect;
 
@@ -68,6 +69,7 @@ class ItemsController extends Controller
     public function update(UpdateItemRequest $request, Item $item)
     {
         $item->update($request->input());
+        $this->dispatch(new UpdateOrderStatus($item->order));
         return Redirect::route('items.edit', [$item->id])->with('message', 'Item updated successfully.');
     }
 }

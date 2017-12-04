@@ -12,7 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('home');
+    return view('home', [
+        'year' => date('Y')
+    ]);
 })->name('home');
 
 Route::resource('orders', 'OrdersController', ['only' => ['index', 'edit']]);
@@ -22,3 +24,8 @@ Route::delete('orders/{order}/items/{item}', [
     'uses' => 'OrdersController@removeItem',
     'as'   => 'orders.items.remove'
 ]);
+Route::get('/mailable', function () {
+    $products = \App\Product::all();
+
+    return new App\Mail\NewProductCreatedByOrder($products);
+});

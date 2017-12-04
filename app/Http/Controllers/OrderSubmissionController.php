@@ -12,12 +12,14 @@ class OrderSubmissionController extends Controller
      * Handles a new order post request.
      * @param NewOrderRequest $request
      * @param OrderSubmissionService $service
-     * @return Collection $allItems
+     * @return array Items in order
      */
     public function store(NewOrderRequest $request, OrderSubmissionService $service)
     {
         $orderInput = $request->get('order');
         $allItems = $service->handle($orderInput);
-        return $allItems;
+        return [
+            'items' => $allItems
+        ];
     }
 }

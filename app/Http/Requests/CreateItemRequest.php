@@ -5,6 +5,10 @@ namespace App\Http\Requests;
 use App\Item;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class CreateItemRequest
+ * @package App\Http\Requests
+ */
 class CreateItemRequest extends FormRequest
 {
     /**

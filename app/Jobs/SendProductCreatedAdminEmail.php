@@ -2,25 +2,37 @@
 
 namespace App\Jobs;
 
+use App\Mail\NewProductCreatedByOrder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 
+/**
+ * Class SendProductCreatedAdminEmail
+ * @package App\Jobs
+ */
 class SendProductCreatedAdminEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @var Collection $newProducts
+     */
+    protected $newProducts;
 
     /**
      * Create a new job instance.
      *
+     * @param Collection $newProducts
      * @return void
      */
-    public function __construct()
+    public function __construct(Collection $newProducts)
     {
-        //
+        $this->newProducts = $newProducts;
     }
 
     /**
@@ -30,7 +42,7 @@ class SendProductCreatedAdminEmail implements ShouldQueue
      */
     public function handle()
     {
-        $text = "a new product(s) have been created";
-        mail('michaelk1001@gmail.com', $text, $text);
+        $toAddress = config('mail.from.address');
+        Mail::to($toAddress)->send(new NewProductCreatedByOrder($this->newProducts));
     }
 }

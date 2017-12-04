@@ -2,18 +2,41 @@
 
 namespace App\Services;
 
-use App\Item;
-use App\Jobs\SendProductCreatedAdminEmail;
 use App\Order;
-use App\Product;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Class OrderSubmissionService
+ * @package App\Services
+ */
 class OrderSubmissionService
 {
+
+    /**
+     * @var ProductSubmissionService
+     */
+    protected $productSubmissionService;
+
+    /**
+     * @var ItemSubmissionService
+     */
+    protected $itemSubmissionService;
+
+    /**
+     * OrderSubmissionService constructor.
+     * @param ProductSubmissionService $productService
+     * @param ItemSubmissionService $itemService
+     */
+    function __construct(ProductSubmissionService $productService, ItemSubmissionService $itemService)
+    {
+        $this->productSubmissionService = $productService;
+        $this->itemSubmissionService = $itemService;
+    }
+
     /**
      * Saves an order from the API request.
      *
-     * @param array $orderInput
+     * @param array $orderInput (validated with a unique SKU in each item)
      * @return Collection $orderItems
      */
     public function handle(array $orderInput)
@@ -21,65 +44,66 @@ class OrderSubmissionService
         // Step 1: Create Order
         $order = Order::create([
             'customer_name' => $orderInput['customer'],
-            'address'       => $orderInput['address']
+            'address'       => $orderInput['address'],
+            'total'         => $orderInput['total']
         ]);
 
-        // Step 2: Check if Products exist, get them (or else create them)
-        // Note: it is already assumed that each "item" in the order will have a unique SKU
-        $products = collect($orderInput['items'])->map(function (array $productInput) {
-            $product = Product::where([
-                'sku' => $productInput['sku']
-            ])->first();
-            if (!$product) {
-                $product = Product::create($productInput);
+        // Step 2: Determine the required order quantity for each SKU, noting that a user might request 2 items with
+        // the same SKU - in which case the quantities must be summed.
+        $orderInput['items'] = $this->mergeDuplicateSKUQuantities($orderInput['items']);
+
+        // Step 3: Check if Products exist, get them (or else create them)
+        // Note: it is already validated that each "item" in the order will have a unique SKU
+        $products = $this->productSubmissionService->findOrCreateProducts($orderInput['items']);
+
+        // Step 4: Assign the Products to Items (by making Items, or using existing available Items)
+        $orderItems = $this->itemSubmissionService->findOrCreateItemsForOrder($order, $products, $orderInput['items']);
+
+        return $orderItems;
+    }
+
+    /**
+     * Merge any items with the same SKU, by summing the quantities.
+     * e.g. [
+     *   { sku: 'SKU1', quantity: 3 },
+     *   { sku: 'SKU1', quantity: 3 },
+     * ]
+     * will become:
+     * [{ sku: 'SKU1', quantity: 6 }]
+     * The colour attribute will be retained, if present.
+     *
+     * @param array $orderItemsInput
+     * @return array transformed orderInput
+     */
+    private function mergeDuplicateSKUQuantities(array $orderItemsInput)
+    {
+        $numUniqueSKUs = array_unique(array_column($orderItemsInput, 'sku'));
+
+        // No merging required if no duplicate SKUs
+        if ($numUniqueSKUs == count($orderItemsInput)) {
+            return $orderItemsInput;
+        }
+
+        $mergedOrderItems = [];
+        array_walk($orderItemsInput, function (array $item) use (&$mergedOrderItems) {
+            // If the Item SKU occurs the first time:
+            if (!isset($mergedOrderItems[$item['sku']])) {
+                $mergedOrderItems[$item['sku']] = $item;
+                return;
             }
-            return $product;
+
+            // If the Item SKU is already in use:
+            // Add the quantity
+            $mergedOrderItems[$item['sku']]['quantity'] += $item['quantity'];
+
+            // Set the colour, if necessary
+            if (!isset($mergedOrderItems[$item['sku']]['colour']) && isset($item['colour'])) {
+                $mergedOrderItems[$item['sku']]['colour'] = $item['colour'];
+            }
         });
 
-        // Step 3: Check if Items exist
-        $numNewItemsMade = 0;
-        $allItems = new Collection();
-        foreach ($orderInput['items'] as $item) {
-            $requiredQuantity = $item['quantity'];
-            $suitableProduct = $products->where('sku', $item['sku'])->first();
-
-            // Get existing Item(s) for adding to the Order
-            $orderItems = Item::where('product_id', $suitableProduct->id)
-                ->availableForNewOrder()
-                ->with('product')
-                ->limit($requiredQuantity)
-                ->get();
-
-            $orderItems->map(function (Item $item) use ($order) {
-                $item->order()->associate($order);
-                $item->save();
-            });
-
-            // Make any required Item(s), and attach them to the order
-            $numItemsStillRequired = $requiredQuantity - $orderItems->count();
-            // return/break if none
-
-            // Insert new Items
-            for ($i = 0; $i < $numItemsStillRequired; $i++) {
-                $newItem = Item::make();
-                $newItem->order()->associate($order);
-                $newItem->product()->associate($suitableProduct);
-                $newItem->save();
-                $orderItems->add($newItem);
-            }
-            $numNewItemsMade += $numItemsStillRequired;
-
-            // Insert into the $allItems Collection
-            $orderItems->map(function (Item $item) use ($allItems) {
-                $allItems->push($item);
-            });
-        }
-
-        // Step 4: Inform the administrator if any new Items were created (as they did not exist)
-        if ($numNewItemsMade) {
-            SendProductCreatedAdminEmail::dispatch(new SendProductCreatedAdminEmail());
-        }
-        return $orderItems;
+        // Return 0-index based array
+        return array_values($mergedOrderItems);
     }
 
 }

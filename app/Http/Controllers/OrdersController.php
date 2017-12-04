@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\UpdateOrderStatus;
 use App\Order;
 use App\Item;
 use Illuminate\Support\Facades\Redirect;
@@ -28,7 +27,6 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        $this->dispatch(new UpdateOrderStatus($order));
         return view('orders/edit', compact('order'));
     }
 

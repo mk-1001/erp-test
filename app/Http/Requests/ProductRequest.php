@@ -4,8 +4,23 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProductRequest extends FormRequest
+/**
+ * Class ProductRequest
+ * @package App\Http\Requests
+ */
+class ProductRequest extends FormRequest
 {
+    /**
+     * Standard validation rules.
+     *
+     * @var array
+     */
+    protected $rules = [
+        'sku'    => 'required|string|min:1|max:20|unique:products,sku',
+        'colour' => 'max:20',
+    ];
+
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,10 +38,10 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules()
     {
-        // Add a unique SKU requirement, only if the SKU is being changed
+        // Add a unique SKU requirement, only if the SKU is being changed (update product request), or a create request.
         $relatedProduct = $this->route('product');
         $uniqueSKU = '';
-        if ($relatedProduct->sku != $this->get('sku')) {
+        if (!$relatedProduct || $relatedProduct->sku != $this->get('sku')) {
             $uniqueSKU = '|unique:products,sku';
         }
 
