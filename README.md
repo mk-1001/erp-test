@@ -25,6 +25,11 @@ an actual instance of a product, and can have an Order assigned.
 - Copy the file ```.env.example``` to ```.env```. Update the database details to your desired database connection. It is
 suggested that you set ```MAIL_FROM_ADDRESS``` and ```MAIL_FROM_NAME``` (the administrator email address).
 ```QUEUE_DRIVER``` may be set to ```database``` for this application.
+- Migrate the database using ```php artisan migrate```.
+- (Optional) seed some sample data into the system using ```php artisan db:seed```. Afterwards, use ```php artisan 
+refresh``` to clear the seeded data.
+- (Optional) perform a feature test using: ```./vendor/bin/phpunit``` to test the ```Order``` submission API. Afterwards,
+refresh the database.
 
 # Running the application
 

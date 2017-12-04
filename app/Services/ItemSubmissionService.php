@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class ItemSubmissionService
+ * This class provides a service for finding or creating items.
  * @package App\Services
  */
 class ItemSubmissionService
@@ -66,7 +67,7 @@ class ItemSubmissionService
      * @param int $quantity
      * @return Collection $items
      */
-    private function assignOrderToExistingItems(Order $order, Product $product, $quantity)
+    public function assignOrderToExistingItems(Order $order, Product $product, $quantity)
     {
         // Get existing available Item(s) for adding to the Order
         $orderItems = Item::where('product_id', $product->id)
@@ -90,7 +91,7 @@ class ItemSubmissionService
      * @param int $quantity num to create
      * @return Collection $newItems
      */
-    private function createNewItemAndAssignOrder(Order $order, Product $product, $quantity = 1)
+    public function createNewItemAndAssignOrder(Order $order, Product $product, $quantity = 1)
     {
         $newItems = new Collection();
         for ($i = 0; $i < $quantity; $i++) {

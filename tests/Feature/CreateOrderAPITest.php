@@ -4,6 +4,12 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 
+/**
+ * Class CreateOrderAPITest
+ * This class contains some quick tests, to verify that the order creation API is working correctly.
+ * Important note: do not perform this test on a production database, as it does not perform a clean-up.
+ * @package Tests\Feature
+ */
 class CreateOrderAPITest extends TestCase
 {
     /**

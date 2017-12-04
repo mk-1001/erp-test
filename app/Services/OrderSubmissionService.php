@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class OrderSubmissionService
+ * This class provides a service to handle a new order request, calling the ProductSubmissionService and
+ * ItemubmissionService where required.
  * @package App\Services
  */
 class OrderSubmissionService

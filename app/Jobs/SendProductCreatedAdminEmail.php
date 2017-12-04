@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 
 /**
  * Class SendProductCreatedAdminEmail
+ * This class is responsible for sending an email to the site administrator when a new product has been created.
  * @package App\Jobs
  */
 class SendProductCreatedAdminEmail implements ShouldQueue

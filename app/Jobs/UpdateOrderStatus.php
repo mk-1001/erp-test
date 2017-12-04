@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 /**
  * Class UpdateOrderStatus
+ * This job is responsible for updating an order's delivery status.
  * @package App\Jobs
  */
 class UpdateOrderStatus implements ShouldQueue

@@ -8,6 +8,7 @@ use App\Jobs\SendProductCreatedAdminEmail;
 
 /**
  * Class ProductSubmissionService
+ * This class provides a service for finding or creating products.
  * @package App\Services
  */
 class ProductSubmissionService
